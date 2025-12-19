@@ -2,13 +2,13 @@
   "name": "bot-final-a7",
   "version": "1.0.0",
   "description": "Bot Discord para encerramento oficial da Família A7",
-  "main": "bot-finala7.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node bot-finala7.js"
+    "start": "node index.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   },
   "dependencies": {
     "discord.js": "^14.14.1",
