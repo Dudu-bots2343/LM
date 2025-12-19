@@ -1,17 +1,24 @@
 {
-  "name": "bot-final-a7",
+  "name": "bot-familia-a7",
   "version": "1.0.0",
-  "description": "Bot Discord para encerramento oficial da Família A7",
+  "description": "Bot Discord Família A7",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "express": "^4.19.2"
+    "discord.js": "14.16.3",
+    "@discordjs/voice": "latest",
+    "@discordjs/rest": "2.3.0",
+    "dotenv": "16.4.5",
+    "ffmpeg-static": "5.2.0",
+    "libsodium-wrappers": "0.7.13",
+    "opusscript": "0.0.8",
+    "ws": "8.18.0"
   }
 }
+
