@@ -19,6 +19,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
   ],
 });
 
@@ -38,7 +39,6 @@ client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
   if (message.content === `${PREFIX}finala7`) {
-
     await message.reply("🔐 Digite a senha para confirmar:");
 
     const filter = (m) => m.author.id === message.author.id;
@@ -53,14 +53,17 @@ client.on("messageCreate", async (message) => {
         return message.channel.send("❌ Senha incorreta. Operação cancelada.");
       }
 
-      await message.channel.send(`📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
+      const aviso = `📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️\n\nHoje chega ao fim um ciclo que marcou histórias, amizades e momentos inesquecíveis.\nApós muito tempo de existência, decisões difíceis e reflexões necessárias, informamos que a **FAMÍLIA A7 FOI OFICIALMENTE ENCERRADA**.\n\nA partir deste momento, todas as atividades estão finalizadas.\n\n🖤 **Família A7 – encerrada.**`;
 
-Hoje chega ao fim um ciclo que marcou histórias, amizades e momentos inesquecíveis.
-Após muito tempo de existência, decisões difíceis e reflexões necessárias, informamos que a **FAMÍLIA A7 FOI OFICIALMENTE ENCERRADA**.
+      // ====== MANDAR NO PV (DM) ======
+      try {
+        await message.author.send(aviso);
+      } catch {
+        await message.channel.send("⚠️ Não consegui enviar DM (PV). O usuário pode ter DMs fechadas.");
+      }
 
-A partir deste momento, todas as atividades estão finalizadas.
-
-🖤 **Família A7 – encerrada.**`);
+      // Também avisa no canal (opcional)
+      await message.channel.send("✅ Confirmação recebida. Iniciando encerramento...");
 
       // APAGAR CANAIS
       for (const c of message.guild.channels.cache.values()) {
