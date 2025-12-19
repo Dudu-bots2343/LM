@@ -1,16 +1,18 @@
-// BOT FINAL A7 – Discord.js v14
-// ⚠️ USE COM EXTREMO CUIDADO ⚠️
-// Este comando APAGA canais, APAGA cargos, EXPULSA TODOS e o bot SAI do servidor.
-
 import { Client, GatewayIntentBits, PermissionsBitField } from "discord.js";
 import express from "express";
 
-// ====================== CONFIG ======================
-const TOKEN = process.env.TOKEN; // coloque no GitHub/Render
+// ================= CONFIG =================
+const TOKEN = process.env.TOKEN || process.env.DISCORD_TOKEN;
 const PREFIX = "!";
-const SENHA_CONFIRMACAO = "lm1234pcd";
+const SENHA = "lm1234pcd";
 
-// ====================== CLIENT ======================
+// =============== TOKEN CHECK ===============
+if (!TOKEN) {
+  console.error("❌ TOKEN não definido no Render (Environment Variables)");
+  process.exit(1);
+}
+
+// ================= CLIENT =================
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -20,103 +22,89 @@ const client = new Client({
   ],
 });
 
-// ====================== KEEP ALIVE ==================
+// ================= KEEP ALIVE ==============
 const app = express();
 app.get("/", (req, res) => res.send("Bot Final A7 online 🚨"));
 app.listen(3000, () => console.log("KeepAlive ativo"));
 
-// ====================== READY =======================
+// ================= READY ===================
 client.once("ready", () => {
-  console.log(`Logado como ${client.user.tag}`);
+  console.log(`🤖 Logado como ${client.user.tag}`);
 });
 
-// ====================== COMMAND =====================
+// ================= COMMAND =================
 client.on("messageCreate", async (message) => {
   if (!message.guild) return;
   if (message.author.bot) return;
 
   if (message.content === `${PREFIX}finala7`) {
-    // Apenas DONO do servidor pode usar
     if (message.author.id !== message.guild.ownerId) {
-      return message.reply("❌ Apenas o **dono do servidor** pode usar este comando.");
+      return message.reply("❌ Apenas o dono do servidor pode usar.");
     }
 
-    // Checar permissões do bot
-    const perms = message.guild.members.me.permissions;
-    const needed = [
-      PermissionsBitField.Flags.Administrator,
-    ];
-
-    if (!perms.has(needed)) {
-      return message.reply("❌ Eu preciso de **ADMINISTRADOR** para executar isso.");
+    if (
+      !message.guild.members.me.permissions.has(
+        PermissionsBitField.Flags.Administrator
+      )
+    ) {
+      return message.reply("❌ Preciso de ADMINISTRADOR.");
     }
 
-    // Pedido de senha
-    await message.reply("🔐 **Confirmação necessária**\nDigite a senha para continuar:");
+    await message.reply("🔐 Digite a senha para confirmar:");
 
     const filter = (m) => m.author.id === message.author.id;
-    const collector = message.channel.createMessageCollector({ filter, time: 30000, max: 1 });
+    const collector = message.channel.createMessageCollector({
+      filter,
+      time: 30000,
+      max: 1,
+    });
 
     collector.on("collect", async (msg) => {
-      if (msg.content !== SENHA_CONFIRMACAO) {
-        await message.channel.send("❌ Senha incorreta. Operação cancelada.");
-        return;
+      if (msg.content !== SENHA) {
+        return message.channel.send("❌ Senha incorreta. Cancelado.");
       }
 
-      // ====================== AVISO ======================
       await message.channel.send(`📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
 
 Hoje chega ao fim um ciclo que marcou histórias, amizades e momentos inesquecíveis.
 Após muito tempo de existência, decisões difíceis e reflexões necessárias, informamos que a **FAMÍLIA A7 FOI OFICIALMENTE ENCERRADA**.
 
-Nada disso apaga tudo o que foi vivido aqui. Cada conversa, cada risada, cada conflito e cada conquista fizeram parte dessa caminhada. A Família A7 não foi apenas um nome, foi um período da vida de muitos.
+Nada disso apaga tudo o que foi vivido aqui. Cada conversa, cada risada, cada conflito e cada conquista fizeram parte dessa caminhada.
 
 A partir deste momento, todas as atividades estão finalizadas.
 Não haverá continuidade, retomada ou substituição.
 
-Aos que estiveram presentes desde o início, aos que chegaram depois e aos que ajudaram a manter tudo de pé: nosso respeito e agradecimento.
-
-Algumas histórias não acabam por falta de força, mas porque chegaram ao seu fim.
-
 🖤 **Família A7 – encerrada.**`);
 
-      // ====================== APAGAR CANAIS ======================
-      for (const channel of message.guild.channels.cache.values()) {
-        try {
-          await channel.delete();
-        } catch (e) {}
+      // Apagar canais
+      for (const c of message.guild.channels.cache.values()) {
+        try { await c.delete(); } catch {}
       }
 
-      // ====================== APAGAR CARGOS ======================
-      for (const role of message.guild.roles.cache.values()) {
-        if (role.managed) continue; // ignora cargos de bots
-        try {
-          await role.delete();
-        } catch (e) {}
+      // Apagar cargos
+      for (const r of message.guild.roles.cache.values()) {
+        if (r.managed) continue;
+        try { await r.delete(); } catch {}
       }
 
-      // ====================== EXPULSAR MEMBROS ======================
+      // Expulsar membros
       await message.guild.members.fetch();
-      for (const member of message.guild.members.cache.values()) {
-        if (member.id === client.user.id) continue;
-        try {
-          await member.kick("Finalização Família A7");
-        } catch (e) {}
+      for (const m of message.guild.members.cache.values()) {
+        if (m.id === client.user.id) continue;
+        try { await m.kick("Encerramento Família A7"); } catch {}
       }
 
-      // ====================== BOT SAI ======================
-      try {
-        await message.guild.leave();
-      } catch (e) {}
+      // Bot sai
+      await message.guild.leave();
     });
 
-    collector.on("end", (collected) => {
-      if (collected.size === 0) {
-        message.channel.send("⏰ Tempo esgotado. Operação cancelada.");
+    collector.on("end", (c) => {
+      if (c.size === 0) {
+        message.channel.send("⏰ Tempo esgotado. Cancelado.");
       }
     });
   }
 });
 
-// ====================== LOGIN =======================
+// ================= LOGIN ===================
 client.login(TOKEN);
