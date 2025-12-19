@@ -1,9 +1,7 @@
+
+Você disse:
 import { Client, GatewayIntentBits, PermissionsBitField } from "discord.js";
 import express from "express";
-import dotenv from "dotenv";
-
-// ================= DOTENV =================
-dotenv.config();
 
 // ================= CONFIG =================
 const TOKEN = process.env.TOKEN || process.env.DISCORD_TOKEN;
@@ -29,11 +27,11 @@ const client = new Client({
 // ================= KEEP ALIVE ==============
 const app = express();
 app.get("/", (req, res) => res.send("Bot Final A7 online 🚨"));
-app.listen(3000, () => console.log("🌐 KeepAlive ativo na porta 3000"));
+app.listen(3000, () => console.log("KeepAlive ativo"));
 
 // ================= READY ===================
 client.once("ready", () => {
-  console.log(`🤖 Logado como ${client.user.tag}`);
+  console.log(🤖 Logado como ${client.user.tag});
 });
 
 // ================= COMMAND =================
@@ -41,7 +39,7 @@ client.on("messageCreate", async (message) => {
   if (!message.guild) return;
   if (message.author.bot) return;
 
-  if (message.content === `${PREFIX}finala7`) {
+  if (message.content === ${PREFIX}finala7) {
     if (message.author.id !== message.guild.ownerId) {
       return message.reply("❌ Apenas o dono do servidor pode usar.");
     }
@@ -68,37 +66,34 @@ client.on("messageCreate", async (message) => {
         return message.channel.send("❌ Senha incorreta. Cancelado.");
       }
 
-      await message.channel.send(`📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
+      await message.channel.send(📢 ⚠️ **AVISO OFICIAL – LEIAM COM ATENÇÃO** ⚠️
 
 Hoje chega ao fim um ciclo que marcou histórias, amizades e momentos inesquecíveis.
 Após muito tempo de existência, decisões difíceis e reflexões necessárias, informamos que a **FAMÍLIA A7 FOI OFICIALMENTE ENCERRADA**.
 
-Nada disso apaga tudo o que foi vivido aqui.
+Nada disso apaga tudo o que foi vivido aqui. Cada conversa, cada risada, cada conflito e cada conquista fizeram parte dessa caminhada.
 
-🖤 **Família A7 – encerrada.**`);
+A partir deste momento, todas as atividades estão finalizadas.
+Não haverá continuidade, retomada ou substituição.
+
+🖤 **Família A7 – encerrada.**);
 
       // Apagar canais
       for (const c of message.guild.channels.cache.values()) {
-        try {
-          await c.delete();
-        } catch {}
+        try { await c.delete(); } catch {}
       }
 
       // Apagar cargos
       for (const r of message.guild.roles.cache.values()) {
         if (r.managed) continue;
-        try {
-          await r.delete();
-        } catch {}
+        try { await r.delete(); } catch {}
       }
 
       // Expulsar membros
       await message.guild.members.fetch();
       for (const m of message.guild.members.cache.values()) {
         if (m.id === client.user.id) continue;
-        try {
-          await m.kick("Encerramento Família A7");
-        } catch {}
+        try { await m.kick("Encerramento Família A7"); } catch {}
       }
 
       // Bot sai
